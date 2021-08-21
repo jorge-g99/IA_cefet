@@ -309,7 +309,6 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        self.startState = (self.startingPosition, self.corners)
         self.initialState = [0,0,0,0]
 
         print('***')
@@ -320,23 +319,19 @@ class CornersProblem(search.SearchProblem):
         Returns the start state (in your state space, not the full Pacman state
         space)
         """
-        "*** YOUR CODE HERE ***"
         return (self.startingPosition, self.initialState)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        pacmanPos, unvisitedCorners = state
-        result = unvisitedCorners == (pacmanPos,)
+        # This path has visit all the corners #
+        for item in state[1]:
+            if item == 0: # Even if one corner is not visited
+                return False
 
-        if result:
-            print(state)
-            print(unvisitedCorners)
-            print((pacmanPos,))
-
-        return result
-        util.raiseNotDefined()
+        # All corners are visited #
+        return True
 
     def expand(self, state):
         """
@@ -350,10 +345,26 @@ class CornersProblem(search.SearchProblem):
         """
 
         children = []
-        for action in self.getActions(state):
-            # Add a child state to the child list if the action is legal
-            # You should call getActions, getActionCost, and getNextState.
-            "*** YOUR CODE HERE ***"
+        for action in [Directions.NORTH, Directions.SOUTH, Directions.EAST, Directions.WEST]:
+
+            x,y = state[0] # Get (x,y)
+            corn = state[1][:] # Get list of visited corners
+
+            # Find movement #
+            dx, dy = Actions.directionToVector(action)
+            nextx, nexty = int(x + dx), int(y + dy)
+
+            # Pick valid movement #
+            if not self.walls[nextx][nexty]:
+
+                # Check if we have reached a corner in the new position #
+                if (nextx,nexty) in self.corners:
+                    corn[self.corners.index((nextx,nexty))] = 1 # This corner is visited
+
+                nextState = ((nextx, nexty),corn) # Fix new state
+                cost = 1
+
+                children.append((nextState,action,cost))
 
         self._expanded += 1 # DO NOT CHANGE
         return children

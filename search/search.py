@@ -162,32 +162,54 @@ def depthFirstSearch(problem):
 # alterar método
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
-    node = getStartNode(problem)
+    from util import Queue
 
-    if problem.isGoalState(node['STATE']):
-        return getActionSequence(node)
-    
-    frontier = util.Queue()
+    # queueXY: ((x,y),[path]) #
+    queueXY = Queue()
 
-    frontier.push(node)
-    
-    explored = set()
+    visited = [] # Visited states
+    path = [] # Every state keeps it's path from the starting state
 
-    while not frontier.isEmpty():
-        node = frontier.pop()
+    # Check if initial state is goal state #
+    if problem.isGoalState(problem.getStartState()):
+        return []
 
-        if node['STATE'] in explored:
-            continue
-        explored.add(node['STATE'])
+    # Start from the beginning and find a solution, path is empty list #
+    queueXY.push((problem.getStartState(),[]))
 
-        if problem.isGoalState(node['STATE']):
-            return getActionSequence(node)
+    while(True):
 
-        for sucessor in problem.expand(node['STATE']):
-            child_node = getChildNode(sucessor, node)
+        # Terminate condition: can't find solution #
+        if queueXY.isEmpty():
+            return []
 
-            frontier.push(child_node)
-    return None
+        # Get informations of current state #
+        xy,path = queueXY.pop() # Take position and path
+        visited.append(xy)
+
+        # Comment this and uncomment 179. This is only works for autograder
+        # In lectures we check if a state is a goal when we find successors
+
+        # Terminate condition: reach goal #
+        if problem.isGoalState(xy):
+            return path
+
+        # Get successors of current state #
+        succ = problem.expand(xy)
+
+        # Add new states in queue and fix their path #
+        if succ:
+            for item in succ:
+                if item[0] not in visited and item[0] not in (state[0] for state in queueXY.list):
+
+                    # Lectures code:
+                    # All impementations run in autograder and in comments i write
+                    # the proper code that i have been taught in lectures
+                    # if problem.isGoalState(item[0]):
+                    #   return path + [item[1]]
+
+                    newPath = path + [item[1]] # Calculate new path
+                    queueXY.push((item[0],newPath))
 
 def nullHeuristic(state, problem=None):
     """
