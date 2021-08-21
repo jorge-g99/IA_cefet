@@ -299,6 +299,8 @@ class CornersProblem(search.SearchProblem):
         """
         self.walls = startingGameState.getWalls()
         self.startingPosition = startingGameState.getPacmanPosition()
+        print(self.startingPosition)
+
         top, right = self.walls.height-2, self.walls.width-2
         self.corners = ((1,1), (1,top), (right, 1), (right, top))
         for corner in self.corners:
@@ -307,7 +309,11 @@ class CornersProblem(search.SearchProblem):
         self._expanded = 0 # DO NOT CHANGE; Number of search nodes expanded
         # Please add any code here which you would like to use
         # in initializing the problem
-        "*** YOUR CODE HERE ***"
+        self.startState = (self.startingPosition, self.corners)
+        self.initialState = [0,0,0,0]
+
+        print('***')
+        print(self.startingPosition)
 
     def getStartState(self):
         """
@@ -315,13 +321,21 @@ class CornersProblem(search.SearchProblem):
         space)
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        return (self.startingPosition, self.initialState)
 
     def isGoalState(self, state):
         """
         Returns whether this search state is a goal state of the problem.
         """
-        "*** YOUR CODE HERE ***"
+        pacmanPos, unvisitedCorners = state
+        result = unvisitedCorners == (pacmanPos,)
+
+        if result:
+            print(state)
+            print(unvisitedCorners)
+            print((pacmanPos,))
+
+        return result
         util.raiseNotDefined()
 
     def expand(self, state):

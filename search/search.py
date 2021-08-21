@@ -145,15 +145,18 @@ def depthFirstSearch(problem):
 
     while not frontier.isEmpty():
         node = frontier.pop()
+
+        if node['STATE'] in explored:
+            continue
         explored.add(node['STATE'])
+
+        if problem.isGoalState(node['STATE']):
+            return getActionSequence(node)
 
         for sucessor in problem.expand(node['STATE']):
             child_node = getChildNode(sucessor, node)
-            if child_node['STATE'] not in explored:
-                if problem.isGoalState(child_node['STATE']):
-                    return getActionSequence(child_node)
-                frontier.push(child_node)
 
+            frontier.push(child_node)
     return None
 
 # alterar método
@@ -172,15 +175,18 @@ def breadthFirstSearch(problem):
 
     while not frontier.isEmpty():
         node = frontier.pop()
+
+        if node['STATE'] in explored:
+            continue
         explored.add(node['STATE'])
+
+        if problem.isGoalState(node['STATE']):
+            return getActionSequence(node)
 
         for sucessor in problem.expand(node['STATE']):
             child_node = getChildNode(sucessor, node)
-            if child_node['STATE'] not in explored:
-                if problem.isGoalState(child_node['STATE']):
-                    return getActionSequence(child_node)
-                frontier.push(child_node)
 
+            frontier.push(child_node)
     return None
 
 def nullHeuristic(state, problem=None):
