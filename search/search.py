@@ -209,34 +209,80 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+from util import PriorityQueue
+class MyPriorityQueueWithFunction(PriorityQueue):
+    """
+    Implements a priority queue with the same push/pop signature of the
+    Queue and the Stack classes. This is designed for drop-in replacement for
+    those two classes. The caller has to provide a priority function, which
+    extracts each item's priority.
+    """
+    def  __init__(self, problem, priorityFunction):
+        "priorityFunction (item) -> priority"
+        self.priorityFunction = priorityFunction      # store the priority function
+        PriorityQueue.__init__(self)        # super-class initializer
+        self.problem = problem
+    def push(self, item, heuristic):
+        "Adds an item to the queue with priority from the priority function"
+        PriorityQueue.push(self, item, self.priorityFunction(self.problem,item,heuristic))
+
+# Calculate f(n) = g(n) + h(n) #
+def f(problem,state,heuristic):
+
+    return problem.getCostOfActionSequence(state[1]) + heuristic(state[0],problem)
+
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    node = getStartNode(problem)
+    # queueXY: ((x,y),[path]) #
+    queueXY = MyPriorityQueueWithFunction(problem,f)
 
-    fn_total_cost_for_node = lambda a_node: a_node['PATH-COST'] + heuristic(a_node['STATE'], problem=problem)
-    frontier = util.PriorityQueueWithFunction(fn_total_cost_for_node)
-    frontier.push(node)
-    explored = set()
+    path = [] # Every state keeps it's path from the starting state
+    visited = [] # Visited states
 
-    while not frontier.isEmpty():
-        node = frontier.pop()
 
-        if node['STATE'] in explored:
+    # Check if initial state is goal state #
+    if problem.isGoalState(problem.getStartState()):
+        return []
+
+    # Add initial state. Path is an empty list #
+    element = (problem.getStartState(),[])
+
+    queueXY.push(element,heuristic)
+
+    while(True):
+
+        # Terminate condition: can't find solution #
+        if queueXY.isEmpty():
+            return []
+
+        # Get informations of current state #
+        xy,path = queueXY.pop() # Take position and path
+
+        # State is already been visited. A path with lower cost has previously
+        # been found. Overpass this state
+        if xy in visited:
             continue
 
-        explored.add(node['STATE'])
+        visited.append(xy)
 
-        if problem.isGoalState(node['STATE']): 
-          return getActionSequence(node)
+        # Terminate condition: reach goal #
+        if problem.isGoalState(xy):
+            return path
 
-        successors = problem.expand(node['STATE'])
+        # Get successors of current state #
+        succ = problem.expand(xy)
 
-        for sucessor in successors:
-            child_node = getChildNode(sucessor, node)
+        # Add new states in queue and fix their path #
+        if succ:
+            for item in succ:
+                if item[0] not in visited:
 
-            frontier.push(child_node)
-            
-    return []
+                    # Like previous algorithms: we should check in this point if successor
+                    # is a goal state so as to follow lectures code
+
+                    newPath = path + [item[1]] # Fix new path
+                    element = (item[0],newPath)
+                    queueXY.push(element,heuristic)
 
 
 # Abbreviations
