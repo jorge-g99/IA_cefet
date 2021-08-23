@@ -209,6 +209,12 @@ def nullHeuristic(state, problem=None):
     """
     return 0
 
+def manhattanHeuristic(position, problem, info={}):
+    "The Manhattan distance heuristic for a PositionSearchProblem"
+    xy1 = position
+    xy2 = problem.goal
+    return abs(xy1[0] - xy2[0]) + abs(xy1[1] - xy2[1])
+
 from util import PriorityQueue
 class MyPriorityQueueWithFunction(PriorityQueue):
     """
@@ -276,9 +282,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
         if succ:
             for item in succ:
                 if item[0] not in visited:
-
-                    # Like previous algorithms: we should check in this point if successor
-                    # is a goal state so as to follow lectures code
 
                     newPath = path + [item[1]] # Fix new path
                     element = (item[0],newPath)

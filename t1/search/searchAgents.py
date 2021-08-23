@@ -434,13 +434,12 @@ def cornersHeuristic(state, problem):
         return 0
 
     else:
-        distancesFromGoals = [] # Calculate all distances from goals(not visited corners)
-
+        distancesFromGoals = []
         for index,item in enumerate(state[1]):
             if item == 0: # Not visited corner
                 # Use manhattan method #
                 distancesFromGoals.append(manhattanDistance(state[0],corners[index]))
-
+                
         # Worst case. This guess should be higher than real. Pick higher distance #
         return max(distancesFromGoals)
 
