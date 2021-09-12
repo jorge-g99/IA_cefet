@@ -78,13 +78,13 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-        # print 'Successor game state:\n', successorGameState
-        # print 'Pacman current position: ', newPos
-        # print 'oldFood:\n', oldFood
-        # print 'newFood:\n', newFood
-        # print 'ghostPositions: ', ghostPositions
-        # print 'successorGameState.score: ', successorGameState.getScore()
-        # print 'newScaredTimes: ', newScaredTimes
+        # print('Successor game state:\n', successorGameState)
+        # print('Pacman current position: ', newPos)
+        # print('oldFood:\n', oldFood)
+        # print('newFood:\n', newFood)
+        # print('ghostPositions: ', ghostPositions)
+        # print('successorGameState.score: ', successorGameState.getScore())
+        # print('newScaredTimes: ', newScaredTimes)
 
         # computa distância para o fantasma mais próximo.
         minDistanceGhost = float("+inf")
@@ -225,7 +225,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         #Used only for pacman agent hence agentindex is always 0.
-        def maxLevel(gameState,depth,alpha, beta):
+        def maxValue(gameState,depth,alpha, beta):
             currDepth = depth + 1
             if gameState.isWin() or gameState.isLose() or currDepth==self.depth:   #Terminal Test 
                 return self.evaluationFunction(gameState)
@@ -234,14 +234,14 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             alpha1 = alpha
             for action in actions:
                 successor= gameState.generateSuccessor(0,action)
-                maxvalue = max (maxvalue,minLevel(successor,currDepth,1,alpha1,beta))
+                maxvalue = max (maxvalue,minValue(successor,currDepth,1,alpha1,beta))
                 if maxvalue > beta:
                     return maxvalue
                 alpha1 = max(alpha1,maxvalue)
             return maxvalue
         
         #For all ghosts.
-        def minLevel(gameState,depth,agentIndex,alpha,beta):
+        def minValue(gameState,depth,agentIndex,alpha,beta):
             minvalue = 999999
             if gameState.isWin() or gameState.isLose():   #Terminal Test 
                 return self.evaluationFunction(gameState)
@@ -250,12 +250,12 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
             for action in actions:
                 successor= gameState.generateSuccessor(agentIndex,action)
                 if agentIndex == (gameState.getNumAgents()-1):
-                    minvalue = min (minvalue,maxLevel(successor,depth,alpha,beta1))
+                    minvalue = min (minvalue,maxValue(successor,depth,alpha,beta1))
                     if minvalue < alpha:
                         return minvalue
                     beta1 = min(beta1,minvalue)
                 else:
-                    minvalue = min(minvalue,minLevel(successor,depth,agentIndex+1,alpha,beta1))
+                    minvalue = min(minvalue,minValue(successor,depth,agentIndex+1,alpha,beta1))
                     if minvalue < alpha:
                         return minvalue
                     beta1 = min(beta1,minvalue)
@@ -270,7 +270,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         for action in actions:
             nextState = gameState.generateSuccessor(0,action)
             # Next level is a min level. Hence calling min for successors of the root.
-            score = minLevel(nextState,0,1,alpha,beta)
+            score = minValue(nextState,0,1,alpha,beta)
             # Choosing the action which is Maximum of the successors.
             if score > currentScore:
                 returnAction = action
@@ -296,7 +296,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE HERE ***"
         #Used only for pacman agent hence agentindex is always 0.
-        def maxLevel(gameState,depth):
+        def maxValue(gameState,depth):
             currDepth = depth + 1
             if gameState.isWin() or gameState.isLose() or currDepth==self.depth:   #Terminal Test 
                 return self.evaluationFunction(gameState)
@@ -319,7 +319,7 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
             for action in actions:
                 successor= gameState.generateSuccessor(agentIndex,action)
                 if agentIndex == (gameState.getNumAgents() - 1):
-                    expectedvalue = maxLevel(successor,depth)
+                    expectedvalue = maxValue(successor,depth)
                 else:
                     expectedvalue = expectLevel(successor,depth,agentIndex+1)
                 totalexpectedvalue = totalexpectedvalue + expectedvalue
