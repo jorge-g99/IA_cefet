@@ -1,0 +1,7 @@
+#Q1. python autograder.py -q q1
+#Q2. python pacman.py -p MinimaxAgent -k 1 -g DirectionalGhost
+#Q3. python pacman.py -p AlphaBetaAgent -a depth=3 -l smallClassic
+#Q4. python pacman.py -p AlphaBetaAgent -l trappedClassic -a depth=3 -q -n 10
+#    python pacman.py -p ExpectimaxAgent -l trappedClassic -a depth=3 -q -n 10
+#Q5. python autograder.py -q q5
+     python pacman.py -l smallClassic -p ExpectimaxAgent -k 1 -n 10
